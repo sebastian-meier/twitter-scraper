@@ -1,8 +1,6 @@
 <?php
 
 	$twitter_username = "USERNAME";
-	$city = "CITY";
-	$location = "LATITUDE,LONGITUDE,DISTANCEkm";
 
 	//--------------
 	//You need to create an app key on developer.twitter.com
