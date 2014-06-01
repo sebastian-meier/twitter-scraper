@@ -4,3 +4,5 @@
 *.sublime-project
 
 config.php
+
+sftp-config.json
