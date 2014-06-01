@@ -1,9 +1,9 @@
 <?php
 
-	$twitter_username = "USERNAME";
+	$twitter_username = "TWITTER-USERNAME";
 
 	//--------------
-	//You need to create an app key on developer.twitter.com
+	//You need to create an app key on dev.twitter.com
 	//In the process you will be asked to provide a callback URL
 	//This url needs to point to the URL where this script is stored
 	//This doesn't work when you are trying to run this locally
@@ -17,7 +17,7 @@
 	//--------------
 	//This array holds the requests you want to setup
 	//
-	//The key needs to be unique as it is going to be 
+	//The key needs to be unique and url-save as it is going to be 
 	//used as an identifier in the database
 	//
 	//Every request holds an array of parameters
@@ -30,7 +30,7 @@
 
 	$requests = array(
 		"KEY" => array(
-			'count'=>'100' //This parameter is mandatory
+			'count'=>'100' //This parameter is kind of mandatory :)
 			'q' => '#HASHTAG'
 		)
 	);

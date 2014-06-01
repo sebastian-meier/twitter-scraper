@@ -22,12 +22,18 @@ After the initialisation you have two ways of executing the scraping process.
 
 The best way to deal with this, especially if you want to execute this script for a week or longer is setting up a cron-job. There are lots of documents on the web on how to setup a cron-job. Depending on your hosting service you might even have a frontend.
 This projects holds a folder named "cron" it contains two HTML documents.
-You need to create a copy of both files for each request you have created.
 "cron_tweets.html" is gathering the actual tweets from the API and "cron_users.html" is looking up data on the users gathered through the tweet-data.
+You need to create a copy of both files for each request you have created.
+Inside of the two files you need to add your URL and the REQUEST_KEY.
+Afterwards setup your cron job and point it to the two HTML Files.
+
+The idea is to tune the cron-jobs execution time to the amount of new tweets coming in for each specific request.
 
 ### Browserbased Execution
 
-
+If you just want to create a few tweets you can skip the cron job setup and just execute this from your browser:
+URL/browser/tweets.php?REQUEST_KEY
+URL/browser/users.php?REQUEST_KEY
 
 ### Maintenance
 

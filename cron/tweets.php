@@ -1,7 +1,5 @@
 <?php
 
-header('Content-type: text/plain;charset=utf8');
-
 require_once ('../config.php');
 require_once ('../lib/codebird.php');
 require_once ('../lib/db.php');
