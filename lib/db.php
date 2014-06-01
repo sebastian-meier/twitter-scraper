@@ -24,4 +24,6 @@ function query_mysql($sql, $link){
 	}
 }
 
+mysql_query("SET NAMES 'utf8'");
+
 ?>

@@ -1,41 +1,34 @@
 <?php
 
-header('Content-type: text/plain;charset=utf8');
+    include("config.php");
+    require_once('lib/codebird.php');
+    include("lib/db.php");
 
-require_once ('codebird.php');
-require_once ('db.php');
+    \Codebird\Codebird::setConsumerKey($key, $secret);
+    $cb = \Codebird\Codebird::getInstance();
 
-$cities = array("amsterdam", "berlin", "capetown", "detroit", "dublin", "london", "mexicocity", "newyork", "paris", "sanfrancisco", "stockholm", "sydney", "tokyo", "washington");
+    session_start();
 
-$current = 13;
+    if($_GET['oauth_request']=='true'){
 
-require_once ($cities[$current].'/config.php');
+        $reply = $cb->oauth_requestToken(array('oauth_callback' => $url.'/1-create_tokens.php'));
+        $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
+        $_SESSION['oauth_token'] = $reply->oauth_token;
+        $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
+        $auth_url = $cb->oauth_authorize();
+        header('Location: ' . $auth_url);
+        die();
 
-\Codebird\Codebird::setConsumerKey($key, $secret);
-$cb = \Codebird\Codebird::getInstance();
+    }elseif(isset($_GET['oauth_verifier'])){
 
-session_start();
+        $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+        $reply = $cb->oauth_accessToken(array('oauth_verifier' => $_GET['oauth_verifier']));
+        $sql = 'INSERT INTO `'.$db_prefix.'twitter_token` (`token`, `secret`)VALUES("'.$reply->oauth_token.'", "'.$reply->oauth_token_secret.'")';
+        $insert = query_mysql($sql, $link);
+        mysql_free_result($insert);
 
-if($_GET['oauth_request']=='true'){
+    }
 
-    $reply = $cb->oauth_requestToken(array('oauth_callback' => 'http://twitter.sebastianmeier.eu/1-create_tokens.php'));
-    $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
-    $_SESSION['oauth_token'] = $reply->oauth_token;
-    $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
-    $auth_url = $cb->oauth_authorize();
-    header('Location: ' . $auth_url);
-    die();
-
-}elseif(isset($_GET['oauth_verifier'])){
-
-    $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
-    $reply = $cb->oauth_accessToken(array('oauth_verifier' => $_GET['oauth_verifier']));
-    $sql = 'INSERT INTO `twitter_token` (`token`, `secret`, `city`)VALUES("'.$reply->oauth_token.'", "'.$reply->oauth_token_secret.'", "'.$cities[$current].'")';
-    $insert = query_mysql($sql, $link);
-    mysql_free_result($insert);
-
-}
-
-echo "good";
+    echo 'Twitter Token Creation completed. <a href="2-create_request.php">Continue</a>';
 
 ?>
