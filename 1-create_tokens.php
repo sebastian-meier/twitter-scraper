@@ -9,7 +9,7 @@
 
     session_start();
 
-    if(!isset($_GET['oauth_verifier'])){ //$_GET['oauth_request']=='true'
+    if(!isset($_GET['oauth_verifier'])){
 
         $reply = $cb->oauth_requestToken(array('oauth_callback' => $url.'1-create_tokens.php'));
         $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);

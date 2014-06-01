@@ -2,16 +2,16 @@
 
 header('Content-type: text/plain;charset=utf8');
 
-require_once ('../codebird.php');
-require_once ('../db.php');
-require_once ('../'.$_GET['city'].'/config.php');
+require_once ('../config.php');
+require_once ('../lib/codebird.php');
+require_once ('../lib/db.php');
 
 //Initiate Codebird with consumer-key and -secret
 \Codebird\Codebird::setConsumerKey($key, $secret);
 $cb = \Codebird\Codebird::getInstance();
 
 //load user-token and -secret from database
-$sql = 'SELECT `token`, `secret` FROM `twitter_token` WHERE city = "'.$city.'" LIMIT 1';
+$sql = 'SELECT `token`, `secret` FROM `twitter_token` WHERE request = "'.$_GET["request"].'" LIMIT 1';
 $result = query_mysql($sql, $link);
 while ($row = mysql_fetch_assoc($result)) {
 	$cb->setToken($row["token"], $row["secret"]);
@@ -19,7 +19,7 @@ while ($row = mysql_fetch_assoc($result)) {
 mysql_free_result($result);
 
 //load request-id, current page and check if we are already done here
-$sql = 'SELECT `id`, `page`, `done`, `pause` FROM `twitter_requests` WHERE city = "'.$city.'" LIMIT 1';
+$sql = 'SELECT `id`, `page`, `done`, `pause` FROM `twitter_requests` WHERE city = "'.$_GET["request"].'" LIMIT 1';
 $result = query_mysql($sql, $link);
 while ($row = mysql_fetch_assoc($result)) {
 	$request_id = $row["id"];

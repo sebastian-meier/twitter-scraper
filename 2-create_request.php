@@ -5,7 +5,7 @@
 	include("lib/db.php");
 
     foreach ($requests as $key => $request) {
-    	$sql = 'INSERT INTO `'.$db_prefix.'twitter_requests` (`request`, `done`)VALUES("'.$key.'", 0)';
+    	$sql = 'INSERT INTO `'.$db_prefix.'twitter_requests` (`request`, `done`, `cycle`)VALUES("'.$key.'", 0, "new")';
     	$insert = query_mysql($sql, $link);
     	mysql_free_result($insert);
 	}

@@ -2,7 +2,7 @@
 <?php
 
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "URL/cron/users.php?city=berlin");
+	curl_setopt($ch, CURLOPT_URL, "URL/cron/users.php?request=REQUEST_KEY");
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 	curl_exec($ch);
 	curl_close($ch);
