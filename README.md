@@ -7,7 +7,7 @@ Realtime Scraper for Twitter based on the Twitter API
 
 ## Config
 Rename config.sample.php to config.php or create a copy by this name.
-Go to developer.twitter.com and create an API Key, the Callback URL you are asked for is the url to the location on your server where you will upload this script.
+Go to dev.twitter.com and create an API Key, the Callback URL you are asked for is the url to the location on your server where you will upload this script.
 Enter your database credentials and the API Key credentials.
 
 ## Initialisation
