@@ -3,15 +3,15 @@
     include("config.php");
     require_once('lib/codebird.php');
     include("lib/db.php");
-
+    
     \Codebird\Codebird::setConsumerKey($key, $secret);
     $cb = \Codebird\Codebird::getInstance();
 
     session_start();
 
-    if($_GET['oauth_request']=='true'){
+    if(!isset($_GET['oauth_verifier'])){ //$_GET['oauth_request']=='true'
 
-        $reply = $cb->oauth_requestToken(array('oauth_callback' => $url.'/1-create_tokens.php'));
+        $reply = $cb->oauth_requestToken(array('oauth_callback' => $url.'1-create_tokens.php'));
         $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
         $_SESSION['oauth_token'] = $reply->oauth_token;
         $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
@@ -29,6 +29,11 @@
 
     }
 
+?>
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></head><body>
+<?php
+
     echo 'Twitter Token Creation completed. <a href="2-create_request.php">Continue</a>';
 
 ?>
+</body></html>

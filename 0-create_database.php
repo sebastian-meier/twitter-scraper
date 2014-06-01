@@ -1,4 +1,3 @@
-<html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></head><body>
 <?php
 
 	include("config.php");
@@ -16,8 +15,11 @@
 
 	foreach ($sql as $s) {
 		$insert = query_mysql($s, $link);
-    	mysql_free_result($insert);
 	}
+
+?>
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></head><body>
+<?php
 
 	echo 'Database Setup completed. <a href="1-create_tokens.php">Continue</a>';
 
