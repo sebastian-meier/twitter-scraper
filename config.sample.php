@@ -30,7 +30,7 @@
 
 	$requests = array(
 		"KEY" => array(
-			'count'=>'100' //This parameter is kind of mandatory :)
+			'count'=>'100', //This parameter is kind of mandatory :)
 			'q' => '#HASHTAG'
 		)
 	);

@@ -7,9 +7,10 @@
     foreach ($requests as $key => $request) {
     	$sql = 'INSERT INTO `'.$db_prefix.'twitter_requests` (`request`, `done`, `cycle`)VALUES("'.$key.'", 0, "new")';
     	$insert = query_mysql($sql, $link);
-    	mysql_free_result($insert);
 	}
 	
+
+	//!!! INSERT MASTER ROW
 ?>
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></head><body>
 <?php

@@ -25,7 +25,6 @@
         $reply = $cb->oauth_accessToken(array('oauth_verifier' => $_GET['oauth_verifier']));
         $sql = 'INSERT INTO `'.$db_prefix.'twitter_token` (`token`, `secret`)VALUES("'.$reply->oauth_token.'", "'.$reply->oauth_token_secret.'")';
         $insert = query_mysql($sql, $link);
-        mysql_free_result($insert);
 
     }
 

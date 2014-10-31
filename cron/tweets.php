@@ -16,13 +16,28 @@ while ($row = mysql_fetch_assoc($result)) {
 }
 mysql_free_result($result);
 
+//load current request
+$sql = 'SELECT `since_id` FROM `'.$db_prefix.'twitter_requests` WHERE `request` = "master" LIMIT 1';
+$result = query_mysql($sql, $link);
+while ($row = mysql_fetch_assoc($result)) {
+	$o_db_request_id = $db_request_id = $row["since_id"];
+}
+mysql_free_result($result);
+
+$ci = 0;
+foreach ($requests as $key => $value) {
+	if($ci == $db_request_id){
+		$db_request_id = $key;
+	}
+	$ci++;
+}
 
 for($i=0; $i<6; $i++){
 	$g = 0;
 	$next = "";
 
 	//load request-id, current page and check if we are already done here
-	$sql = 'SELECT `id`, `since_id`, `max_id`, `temp_since_id`, `cycle`, `done`, `pause`, `overall` FROM `'.$db_prefix.'twitter_requests` WHERE `request` = "'.$_GET['request'].'" LIMIT 1';
+	$sql = 'SELECT `id`, `since_id`, `max_id`, `temp_since_id`, `cycle`, `done`, `pause`, `overall` FROM `'.$db_prefix.'twitter_requests` WHERE `request` = "'.$db_request_id.'" LIMIT 1';
 	$result = query_mysql($sql, $link);
 	while ($row = mysql_fetch_assoc($result)) {
 		$request_id = $row["id"];
@@ -40,8 +55,8 @@ for($i=0; $i<6; $i++){
 
 		if($cycle=="new"){
 			//This is the state at the start of the scraping-run
-			$reply = $cb->search_tweets($requests[$_GET["request"]]);
-			$result_since = processResults($reply, $link, $request_id, $_GET["request"]);
+			$reply = $cb->search_tweets($requests[$db_request_id]);
+			$result_since = processResults($reply, $link, $request_id, $db_request_id);
 			$g += $result_since[2];
 
 			//store the since_id and set the cycle to start
@@ -51,8 +66,8 @@ for($i=0; $i<6; $i++){
 
 		}elseif($cycle=="start"){
 			//We have the last tweet-id from our previous call which we are using as a since_id parameter
-			$reply = $cb->search_tweets($requests[$_GET["request"]]);
-			$result_since = processResults($reply, $link, $request_id, $_GET["request"]);
+			$reply = $cb->search_tweets($requests[$db_request_id]);
+			$result_since = processResults($reply, $link, $request_id, $db_request_id);
 			$g += $result_since[2];
 
 			if($result_since[1]<$since_id){
@@ -71,10 +86,10 @@ for($i=0; $i<6; $i++){
 
 			}
 		}elseif($cycle=="active"){
-			$r = $requests[$_GET["request"]];
+			$r = $requests[$db_request_id];
 			$r['max_id'] = $max_id;
 			$reply = $cb->search_tweets($r);
-			$result_since = processResults($reply, $link, $request_id, $_GET["request"]);
+			$result_since = processResults($reply, $link, $request_id, $db_request_id);
 			$g += $result_since[2];
 
 			if($result_since[1]<$since_id){
@@ -92,11 +107,41 @@ for($i=0; $i<6; $i++){
 
 			}	
 		}
-		echo 'tweets:'.$_GET["request"].':'.$g.'/'.$result_since[3].':'.$cycle."=>".$next." (".$result_since[0]."/".$result_since[1]." = ".($result_since[1]-$since_id).")\n";
+		//echo 'tweets:'.$_GET["request"].':'.$g.'/'.$result_since[3].':'.$cycle."=>".$next." (".$result_since[0]."/".$result_since[1]." = ".($result_since[1]-$since_id).")\n";
 	}else{
-		echo 'tweets:'.$_GET["request"].':pause'."\n";
+		//echo 'tweets:'.$_GET["request"].':pause'."\n";
 	}
 }
+
+//update for next request
+
+function nextID(){
+	global $o_db_request_id, $requests;
+	$o_db_request_id++;
+	if($o_db_request_id >= count($requests)){
+		$o_db_request_id = 0;
+	}
+	return $o_db_request_id;
+}
+
+$check = false;
+
+while(!$check){
+	$o_db_request_id = nextID();
+	$sql = 'SELECT `done` FROM `'.$db_prefix.'twitter_requests` WHERE `id` = "'.$o_db_request_id.'" LIMIT 1';
+	$result = query_mysql($sql, $link);
+	while ($row = mysql_fetch_assoc($result)) {
+		if($row["done"]<1){
+			$check = true;
+		}
+	}
+}
+
+
+
+$sql = 'UPDATE `'.$db_prefix.'twitter_requests` SET `since_id` = '.$o_db_request_id.' WHERE `request` = "master"';
+$result = query_mysql($sql, $link);
+
 
 //Processing the results from the twitter API
 function processResults($results, $link, $request_id, $request){
